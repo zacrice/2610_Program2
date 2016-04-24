@@ -18,7 +18,7 @@ using namespace std;
 int main()
 {
     string str1, str2;
-    unsigned long long num1, num2, s1, s2, ex1, ex2, frac1, frac2, sign, exponent, fraction;
+    unsigned long long num1, num2, s1, s2, ex1, ex2, frac1, frac2, sign, exponent, fraction, sig1, sig2;
 
     cout<<"Enter a single precision floating point (in hex): ";
     cin>>str1;
@@ -27,12 +27,13 @@ int main()
 
     istringstream iss1(str1);
     iss1 >> hex >> num1;
-    cout << "num1: " << num1 << endl;
-
+    cout << "num1: " << hex << num1 << endl;
+	
     istringstream iss2(str2);
     iss2 >> hex >> num2;
-    cout << "num2: " << num2 << endl;
-
+    cout << "num2: " << hex << num2 << endl;
+	
+	
     s1 = num1 >> 31;
     s2 = num2 >> 31;
 
@@ -49,15 +50,19 @@ int main()
 
     frac1 = num1 & 0x00000000007fffff;
     frac2 = num2 & 0x00000000007fffff;
-
+	
+	sig1 = frac1 | 0x0000000000800000;
+	sig2 = frac2 | 0x0000000000800000;
+	
     cout << "frac1: " << hex << frac1 << endl;
     cout << "frac2: " << hex << frac2 << endl;
-
+	cout << "significand1: " << hex << sig1 << endl;
+	cout << "significand2: " << hex << sig2 << endl;
     exponent = (ex1 + ex2) - 127;
     //display the output
     cout << "exponent: " << hex << exponent << endl;
 
-    fraction = frac1 * frac2;
+    fraction = sig1 * sig2;
     cout << "fraction: " << hex << fraction << endl;
 
 
