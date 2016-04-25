@@ -82,7 +82,7 @@ int main()
     fraction = sig1 * sig2;
     //cout << "fracRes: " << hex << fraction << endl;
 	//convert fraction to binary string to count leading zeroes
-	string s = bitset<64>(fraction).to_string();
+	string s = bitset<64>(fraction).to_string(); //this is all zeroes on the cse machine
 	char bits[64];
 	strcpy(bits, s.c_str());
 	int zeroes;
