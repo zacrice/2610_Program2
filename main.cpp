@@ -26,44 +26,61 @@ int main()
 
     istringstream iss1(str1);
     iss1 >> hex >> num1;
-    cout << "num1: " << hex << num1 << endl;
+	//cout <<"num1: "<< hex << num1 << endl;
+	//string ns1 = bitset<64>(num1).to_string();
+	//cout << ns1 << endl;
 	
     istringstream iss2(str2);
     iss2 >> hex >> num2;
-    cout << "num2: " << hex << num2 << endl;
-	
+	//cout <<"num2: "<< hex << num2 << endl;
+	//string ns2 = bitset<64>(num2).to_string();
+	//cout << ns2 << endl;
 	
     s1 = num1 >> 31;
     s2 = num2 >> 31;
 
-    cout << "s1: " << hex << s1 << endl;
-    cout << "s2: " << hex << s2 << endl;
 
     ex1 = num1 & 0x000000007F800000;
     ex1 = ex1 >> 23;
     ex2 = num2 & 0x000000007F800000;
     ex2 = ex2 >> 23;
-
-    cout << "ex1: " << hex << ex1 << endl;
-    cout << "ex2: " << hex << ex2 << endl;
+   
 
     frac1 = num1 & 0x00000000007fffff;
     frac2 = num2 & 0x00000000007fffff;
+    //cout << "frac1: " << hex << frac1 << endl;
+    //cout << "frac2: " << hex << frac2 << endl;
 	
 	//add leading 1 to fraction to create significand e.g. 1.001.....	
 	sig1 = frac1 | 0x0000000000800000;
 	sig2 = frac2 | 0x0000000000800000;
-	
-    cout << "frac1: " << hex << frac1 << endl;
-    cout << "frac2: " << hex << frac2 << endl;
-	cout << "significand1: " << hex << sig1 << endl;
-	cout << "significand2: " << hex << sig2 << endl;
+	//cout << "sig1: " << hex << sig1 << endl;
+	//cout << "sig2: " << hex << sig2 << endl;
+
     exponent = (ex1 + ex2) - 127;
     //display the output
-    cout << "exponent: " << hex << exponent << endl;
+    string ns = bitset<64>(exponent).to_string();//------display output in binary------
+    char Bexponent[64];
+    int zCount;
+    strcpy(Bexponent, ns.c_str());
+    for (int i = 0; i<64; i++)
+    {
+		if (Bexponent[i] == '1')
+		{
+			zCount = i;
+			break;
+		}
+	}
+	cout << "Step 1 - Add the expoenents" << endl << "Result (in binary): ";
+	for (int i = zCount; i < 64; i++)
+	{
+		cout << Bexponent[i];
+	}
+	cout << endl << endl;					
+    //----------end exponent display---------
 	//multiply significands
     fraction = sig1 * sig2;
-    cout << "fraction: " << hex << fraction << endl;
+    //cout << "fracRes: " << hex << fraction << endl;
 	//convert fraction to binary string to count leading zeroes
 	string s = bitset<64>(fraction).to_string();
 	char bits[64];
@@ -77,21 +94,48 @@ int main()
 			break;
 		}
 	}
+	//print step 2
+	cout << "Step 2 - Multiply significands" << endl << "Result (in binary): ";
+	for (int i = zeroes-1; i<64; i++)
+	{
+		cout << bits[i];
+	}
+	cout << endl << endl;
+	//end print step2
 	//shift left by amount of zeroes to remove first bit
 	fraction = fraction << zeroes;
 	
 	// shift right by 64 - 23 bits to store at correct range
 	fraction = fraction >> (64-23);
-	
+	//print step 3
+	string fs = bitset<64>(fraction).to_string();
+	char fracbits[64];
+	strcpy(fracbits, fs.c_str());
+	cout << "Step 3 - Normalize the significand: " << endl << "Result of fraction (in binary): ";
+	for (int i = 64-23; i < 64; i++)
+	{
+		cout << fracbits[i];
+	}
+	cout << endl;
 	exponent++; //hard coding exponent change
+	string bs = bitset<64>(exponent).to_string();
+	char expBits[64];
+	strcpy(expBits, bs.c_str());
+	cout << "Result of exponent (in binary): ";
+	for (int i = 64-8; i<64; i++)
+	{
+		cout << expBits[i];
+	}
+	cout << endl << endl;
 	exponent = exponent << 23; //shift exponent to correct range
-	//string ms = bitset<64>(exponent).to_string(); test print exponent
-	//cout << ms << endl;
+
 	//determine sign
 	sign = s1 xor s2;
+	cout << "Step 4 - Determine the sign" << endl;
+	cout << "Result (in binary): " << sign << endl << endl;
 	sign = sign << 31;
 	unsigned long long result = sign | exponent | fraction;
-	cout << "Final Result: " << hex << result <<endl;
+	cout << "Product (in hex): " << hex << result <<endl << endl;
 	
 
     return 0;
