@@ -26,15 +26,9 @@ int main()
 
     istringstream iss1(str1);
     iss1 >> hex >> num1;
-	//cout <<"num1: "<< hex << num1 << endl;
-	//string ns1 = bitset<64>(num1).to_string();
-	//cout << ns1 << endl;
 	
     istringstream iss2(str2);
     iss2 >> hex >> num2;
-	//cout <<"num2: "<< hex << num2 << endl;
-	//string ns2 = bitset<64>(num2).to_string();
-	//cout << ns2 << endl;
 	
     s1 = num1 >> 31;
     s2 = num2 >> 31;
@@ -48,14 +42,10 @@ int main()
 
     frac1 = num1 & 0x00000000007fffff;
     frac2 = num2 & 0x00000000007fffff;
-    //cout << "frac1: " << hex << frac1 << endl;
-    //cout << "frac2: " << hex << frac2 << endl;
 	
 	//add leading 1 to fraction to create significand e.g. 1.001.....	
 	sig1 = frac1 | 0x0000000000800000;
 	sig2 = frac2 | 0x0000000000800000;
-	//cout << "sig1: " << hex << sig1 << endl;
-	//cout << "sig2: " << hex << sig2 << endl;
 
     exponent = (ex1 + ex2) - 127;
     //display the output
@@ -80,7 +70,6 @@ int main()
     //----------end exponent display---------
 	//multiply significands
     fraction = sig1 * sig2;
-    //cout << "fracRes: " << hex << fraction << endl;
 	//convert fraction to binary string to count leading zeroes
 	string s = bitset<64>(fraction).to_string(); //this is all zeroes on the cse machine
 	char bits[64];
@@ -94,11 +83,25 @@ int main()
 			break;
 		}
 	}
+	//////weird dynamic right shifting
+	fraction = fraction >> (41-zeroes);
+	string s22 = bitset<64>(fraction).to_string();
+	char mmmbits[64];
+	strcpy(mmmbits, s22.c_str());
+	for (int i = 0; i<64; i++)
+	{
+		if(mmmbits[i] == '1')
+		{
+			zeroes = i+1;
+			break;
+		}
+	}
+	//// 
 	//print step 2
 	cout << "Step 2 - Multiply significands" << endl << "Result (in binary): ";
 	for (int i = zeroes-1; i<64; i++)
 	{
-		cout << bits[i];
+		cout << mmmbits[i];
 	}
 	cout << endl << endl;
 	//end print step2
